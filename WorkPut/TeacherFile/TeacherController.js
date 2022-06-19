@@ -7,13 +7,18 @@ const crypto = require("crypto");
 const nodemailer = require("nodemailer");
 const mongoose = require("mongoose");
 
-const transport = nodemailer.createTransport({
-	service: "gmail",
-	auth: {
-		user: "Gideonekeke64@gmail.com",
-		pass: "sgczftichnkcqksx",
-	},
-});
+
+const { google } = require("googleapis");
+
+const CLIENT_ID =
+	"922981826695-rviuikdrd4rk1kbsake7iusml8qb2ibc.apps.googleusercontent.com";
+const CLIENT_SECRET = "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";
+const CLIENT_TOKEN =
+	"4/0AX4XfWg_vE6SU-W9lMKzVWPR14HQquZF4A3LWO0L0wlifqCQpzHUCNn5L9GTFZK5c1OCsg";
+const CLIENT_REDIRECT = "https://developers.google.com/oauthplayground";
+
+const oAuth = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, CLIENT_REDIRECT);
+oAuth.setCredentials({ refresh_token: CLIENT_TOKEN });
 
 const createTeacher = async (req, res) => {
 	try {
@@ -53,8 +58,21 @@ const createTeacher = async (req, res) => {
 				getSchool.teacher.push(mongoose.Types.ObjectId(newTeacher._id));
 				getSchool.save();
 
-				const mailOptions = {
-					from: "ajmarketplace52@gamil.com",
+				
+		const access = await oAuth.getAccessToken();
+		const transport = nodemailer.createTransport({
+			service: "gmail",
+			auth: {
+				type: "OAuth2",
+				clientId: CLIENT_ID,
+				clientSecret: CLIENT_SECRET,
+				refresh_token: CLIENT_TOKEN,
+				accessToken: access.token,
+			},
+		});
+
+		const mailOptions = {
+			from: "Skuul ✉️ <skuulkude@gmail.com>",
 					to: email,
 					subject: "Account Verification",
 					html: `
@@ -148,8 +166,21 @@ const signinTeacher = async (req, res) => {
 					const getToken = crypto.randomBytes(5).toString("hex");
 					const token = jwt.sign({ getToken }, "ThisIsTheCode");
 
-					const mailOptions = {
-						from: "ajmarketplace52@gamil.com",
+					
+		const access = await oAuth.getAccessToken();
+		const transport = nodemailer.createTransport({
+			service: "gmail",
+			auth: {
+				type: "OAuth2",
+				clientId: CLIENT_ID,
+				clientSecret: CLIENT_SECRET,
+				refresh_token: CLIENT_TOKEN,
+				accessToken: access.token,
+			},
+		});
+
+		const mailOptions = {
+			from: "Skuul ✉️ <skuulkude@gmail.com>",
 						to: email,
 						subject: "Account re-Verification",
 						html: `
@@ -273,8 +304,21 @@ const newPasswordRequest = async (req, res) => {
 					{ new: true }
 				);
 
-				const mailOptions = {
-					from: "ajmarketplace52@gamil.com",
+				
+		const access = await oAuth.getAccessToken();
+		const transport = nodemailer.createTransport({
+			service: "gmail",
+			auth: {
+				type: "OAuth2",
+				clientId: CLIENT_ID,
+				clientSecret: CLIENT_SECRET,
+				refresh_token: CLIENT_TOKEN,
+				accessToken: access.token,
+			},
+		});
+
+		const mailOptions = {
+			from: "Skuul ✉️ <skuulkude@gmail.com>",
 					to: email,
 					subject: "Reset Password Request",
 					html: `
